@@ -11,6 +11,7 @@ public class GameInfo implements Serializable {
 
     int categoriesPassed; // number of categories completed
     String[] categories; // server. The server sends how many categories are left for the client to complete
+    int[] wordsInCategories; // server. The server sends how many words are left in each category.
     String message; // server/client. This could be used to specify what letter the client is sending, what category the client
     // selected, etc.
     String flag; // server/client flags
@@ -32,6 +33,9 @@ public class GameInfo implements Serializable {
         categories = otherCategories.clone();
     }
 
+    public void setWordsInCategories(int[] letters) {
+        wordsInCategories = Arrays.copyOf(letters, letters.length);
+    }
     public void setMessage(String message) {
         this.message = message;
     }

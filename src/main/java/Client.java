@@ -39,8 +39,9 @@ public class Client extends Thread {
 
     public void sendCategoryRequest() {
         try {
-            GameInfo info = new GameInfo("sendCategory");
+            GameInfo info = new GameInfo("sendCategories");
             out.writeObject(info);
+            //System.out.println("sending request");
         } catch (IOException e) {
             e.printStackTrace();
         }

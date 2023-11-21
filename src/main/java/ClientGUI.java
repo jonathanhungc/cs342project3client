@@ -28,6 +28,7 @@ public class ClientGUI extends Application {
                 handleServerUpdate();
             });
         });
+        clientConnection.start();
 
         Scene start = createStartScene(primaryStage);
         primaryStage.setScene(start);
@@ -51,23 +52,29 @@ public class ClientGUI extends Application {
 
         VBox box = new VBox(40, messageLabel, startBtn, exitBtn);
         box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-background-color: cyan;");
+        box.setStyle("-fx-background-color: cyan; -fx-font-family: Arial");
 
         return new Scene(box, 700, 800);
     }
 
+
+
     private Scene createCategoryScene(Stage primaryStage) {
         List<Button> categoryButtons = new ArrayList<>();
 
-        for (String category : info.getCategories()) {
-            //if (!info.isSolved(category)) {
+        if (info != null && info.categories != null) {
+            for (String category : info.categories) {
                 Button categoryBtn = new Button(category);
                 categoryBtn.setOnAction(e -> {
                     clientConnection.sendSelectedCategory(category);
                     primaryStage.setScene(createGameScene(primaryStage));
                 });
                 categoryButtons.add(categoryBtn);
-            //}
+            }
+        } else {
+            // Handle the case when info or info.getCategories() is null
+            System.out.println("GameInfo or categories are null. Unable to create category scene.");
+            // You might want to provide default behavior or show an error message here
         }
 
         Label titleLabel = new Label("Choose a Category");
@@ -76,7 +83,7 @@ public class ClientGUI extends Application {
         box.getChildren().add(titleLabel);
         box.getChildren().addAll(categoryButtons);
         box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-background-color: cyan;");
+        box.setStyle("-fx-background-color: cyan; -fx-font-family: Arial;");
 
         return new Scene(box, 700, 800);
     }
@@ -84,7 +91,7 @@ public class ClientGUI extends Application {
     private Scene createGameScene(Stage primaryStage) {
         Label instructionLabel = new Label("Guess a letter of the word!");
 
-        Label wordLabel = new Label(info.getDisplayWord());
+        Label wordLabel = new Label(new String (info.wordGuess));
 
         TextField textField = new TextField();
         textField.setPromptText("Guess letter");
@@ -94,7 +101,7 @@ public class ClientGUI extends Application {
         textField.setTextFormatter(new TextFormatter<>(change ->
                 change.getControlNewText().length() <= 1 ? change : null));
 
-        Label attempts = new Label(info.getAttemptsLeft() + " misses left");
+        Label attempts = new Label(6 - info.misses + " misses left");
 
         Button submitBtn = new Button("Submit");
 
@@ -114,7 +121,7 @@ public class ClientGUI extends Application {
 private void handleServerUpdate() {
     // Update UI based on the received GameInfo from the server
     if (info != null) {
-        switch (info.getFlag()) {
+        switch (info.flag) {
             case "selectCategory":
                 // Handle the server sending categories
                 break;

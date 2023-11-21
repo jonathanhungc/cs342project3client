@@ -1,50 +1,135 @@
-/**
- * FILE: GameInfo.java
- *
- * Class used for communication between client and server. GameInfo has different members used by the server
- * to send information of the game to the client, and used by the client to notify the server of its current actions.
- */
-
 import java.io.Serializable;
 import java.util.Arrays;
 
 public class GameInfo implements Serializable {
-    char[] wordGuess; // It is empty at the start of each guess of a word, and the server updates constantly
-    // depending on the letter sent by the client
-    int lettersGuessed; // server updates how many letters have been guessed of the current word
-    int misses; // server updates how many misses the client has
-    int categoriesPassed; // number of categories completed
-    String[] categories; // the server sends how many categories are left for the client to complete
-    int[] wordsInCategories; // the server sends how many words are left in each category.
-    String message; // used to specify what letter the client is sending, what category the client selected, etc.
-    String flag; // flags that determine the type of request/response
+    private char[] wordGuess;
+    private int lettersGuessed;
+    private int misses;
+    private int categoriesPassed;
+    private String[] categories;
+    private int[] wordsInCategories;
+    private String message;
+    private String flag;
 
-    // constructor sets the flag of the object
-    GameInfo(String flag) {
+    // New fields
+    private String selectedCategory;
+    private char guessedLetter;
+    private boolean restartRequested;
+    private boolean exitRequested;
+
+    // private WordCategory selectedWordCategory; // Add this field
+
+    // public WordCategory getSelectedWordCategory() {
+    //     return selectedWordCategory;
+    // }
+
+    // public void setSelectedWordCategory(WordCategory selectedWordCategory) {
+    //     this.selectedWordCategory = selectedWordCategory;
+    // }
+
+    public int getAttemptsLeft() {
+        return 6 - misses;
+    }
+
+    public String getDisplayWord() {
+        return String.valueOf(wordGuess); // Modify this based on your game logic
+    }
+
+    public GameInfo(String flag) {
         this.flag = flag;
     }
 
-    // mostly set by the server
-    public void setElements(char[] word, int lettersGuessed, int misses, int categoriesPassed) {
-        wordGuess = Arrays.copyOf(word, word.length);
+    public char[] getWordGuess() {
+        return Arrays.copyOf(wordGuess, wordGuess.length);
+    }
+
+    public void setWordGuess(char[] wordGuess) {
+        this.wordGuess = Arrays.copyOf(wordGuess, wordGuess.length);
+    }
+
+    public int getLettersGuessed() {
+        return lettersGuessed;
+    }
+
+    public void setLettersGuessed(int lettersGuessed) {
         this.lettersGuessed = lettersGuessed;
+    }
+
+    public int getMisses() {
+        return misses;
+    }
+
+    public void setMisses(int misses) {
         this.misses = misses;
+    }
+
+    public int getCategoriesPassed() {
+        return categoriesPassed;
+    }
+
+    public void setCategoriesPassed(int categoriesPassed) {
         this.categoriesPassed = categoriesPassed;
     }
 
-    // set by the server to set the current names of the categories
-    public void setCategories(String[] otherCategories) {
-        categories = new String[otherCategories.length];
-        categories = otherCategories.clone();
+    public String[] getCategories() {
+        return Arrays.copyOf(categories, categories.length);
     }
 
-    // set by the server to set the current number of words in each category
-    public void setWordsInCategories(int[] letters) {
-        wordsInCategories = Arrays.copyOf(letters, letters.length);
+    public void setCategories(String[] categories) {
+        this.categories = Arrays.copyOf(categories, categories.length);
     }
 
-    // used to set the message member
+    public int[] getWordsInCategories() {
+        return Arrays.copyOf(wordsInCategories, wordsInCategories.length);
+    }
+
+    public void setWordsInCategories(int[] wordsInCategories) {
+        this.wordsInCategories = Arrays.copyOf(wordsInCategories, wordsInCategories.length);
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    // New getters and setters
+    public String getSelectedCategory() {
+        return selectedCategory;
+    }
+
+    public void setSelectedCategory(String selectedCategory) {
+        this.selectedCategory = selectedCategory;
+    }
+
+    public char getGuessedLetter() {
+        return guessedLetter;
+    }
+
+    public void setGuessedLetter(char guessedLetter) {
+        this.guessedLetter = guessedLetter;
+    }
+
+    public boolean isRestartRequested() {
+        return restartRequested;
+    }
+
+    public void setRestartRequested(boolean restartRequested) {
+        this.restartRequested = restartRequested;
+    }
+
+    public boolean isExitRequested() {
+        return exitRequested;
+    }
+
+    public void setExitRequested(boolean exitRequested) {
+        this.exitRequested = exitRequested;
+    }
+
 }

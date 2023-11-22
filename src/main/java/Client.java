@@ -10,11 +10,21 @@ public class Client extends Thread {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private int port;
-    private Consumer<Serializable> callback;
+    private Consumer<Serializable> callbackCategories;
 
-    Client(int port, Consumer<Serializable> call) {
+    private Consumer<Serializable> callbackWord;
+
+
+    Client(int port) {
         this.port = port;
-        callback = call;
+    }
+
+    public void setCallbackCategories(Consumer<Serializable> call) {
+        callbackCategories = call;
+    }
+
+    public void setCallbackWord(Consumer<Serializable> call) {
+        callbackWord = call;
     }
 
     public void run() {
@@ -30,7 +40,29 @@ public class Client extends Thread {
         while (true) {
             try {
                 GameInfo data = (GameInfo) in.readObject();
-                callback.accept(data);
+
+                if (data.flag.equals("selectCategory")) {
+                    for (int i = 0; i < data.categories.length; i++) {
+                        callbackCategories.accept(data.categories[i]);
+                    }
+                }
+
+                else if (data.flag.equals("guess")) {
+                    callbackWord.accept(data);
+                }
+
+                else if (data.flag.equals("")) {
+
+                }
+
+                else if (data.flag.equals("")) {
+
+                }
+
+                else if (data.flag.equals("")) {
+
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

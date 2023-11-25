@@ -110,16 +110,15 @@ public class ClientGUI extends Application {
             Button categoryOption = (Button) node;
             String categoryText = categoryOption.getText();
 
-            if (categoriesStatus.contains(categoryText)) {
-                categoryOption.setDisable(true);
-            } else {
-                categoryOption.setDisable(false);
-            }
+//            if (categoriesStatus.contains(categoryText)) {
+//                categoryOption.setDisable(true);
+//            } else {
+//                categoryOption.setDisable(false);
+//            }
 
             categoryOption.setOnAction(e -> {
-                String selectedCategory = categoryText;
-                clientConnection.sendSelectedCategory(selectedCategory);
-                categoriesStatus.add(selectedCategory);
+                clientConnection.sendSelectedCategory(categoryText);
+                //categoriesStatus.add(selectedCategory);
             });
         });
 
@@ -173,8 +172,8 @@ public class ClientGUI extends Application {
     }
 
     public void showRoundWinPopup(String word) {
-        Platform.runLater(() -> {
-            primaryStage.setScene(createCategoryScene(primaryStage));
+        //Platform.runLater(() -> {
+            //primaryStage.setScene(createCategoryScene(primaryStage));
 
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -194,13 +193,10 @@ public class ClientGUI extends Application {
 
             popupStage.setScene(popupScene);
             popupStage.showAndWait();
-        });
+        //});
     }
 
     public void showRoundLossPopup(String word) {
-        Platform.runLater(() -> {
-            primaryStage.setScene(createCategoryScene(primaryStage));
-
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.initOwner(primaryStage);
@@ -219,7 +215,6 @@ public class ClientGUI extends Application {
 
             popupStage.setScene(popupScene);
             popupStage.showAndWait();
-        });
     }
 
     private Scene createGameWinScene(String message, Stage primaryStage) {
@@ -230,7 +225,7 @@ public class ClientGUI extends Application {
         restartButton.setStyle("-fx-font-family: Arial;");
         restartButton.setOnAction(e -> {
             clientConnection.sendRestartRequest();
-            primaryStage.setScene(createCategoryScene(primaryStage));
+            //primaryStage.setScene(createCategoryScene(primaryStage));
         });
 
         Button exitButton = new Button("Exit");
@@ -265,51 +260,40 @@ public class ClientGUI extends Application {
     }
 
     private void handleCategories(Serializable data) {
-        if (data instanceof GameInfo && ((GameInfo) data).flag.equals("selectCategory")) {
-            GameInfo info = (GameInfo) data;
-            categoriesList.getChildren().clear();
 
-            for (String category : info.categories) {
-                Button categoryOption = new Button(category);
-                categoryOption.setOnAction(e -> {
-                    clientConnection.sendSelectedCategory(categoryOption.getText());
-                    categoryOption.setDisable(true);
-                    wonCategories.add(categoryOption.getText());
-                });
+        GameInfo info = (GameInfo) data;
+        categoriesList.getChildren().clear();
 
-                categoryOption.setStyle("-fx-font-family: Arial");
-                categoriesList.getChildren().add(categoryOption);
-            }
+        for (String category : info.categories) {
+            Button categoryOption = new Button(category);
+            categoryOption.setOnAction(e -> {
+                clientConnection.sendSelectedCategory(categoryOption.getText());
+                //categoryOption.setDisable(true);
+                //wonCategories.add(categoryOption.getText());
+            });
 
-            primaryStage.setScene(createCategoryScene(primaryStage));
+            categoryOption.setStyle("-fx-font-family: Arial");
+            categoriesList.getChildren().add(categoryOption);
         }
-    }
+
+        primaryStage.setScene(createCategoryScene(primaryStage));
+        }
 
     private void handleWord(Serializable data) {
-        if (data instanceof GameInfo && ((GameInfo) data).flag.equals("guess")) {
-            GameInfo info = (GameInfo) data;
-            primaryStage.setScene(createGameScene(info, primaryStage));
-        }
+        GameInfo info = (GameInfo) data;
+        primaryStage.setScene(createGameScene(info, primaryStage));
     }
 
     private void handleRoundWin(Serializable data) {
-        if (data instanceof String) {
-            String word = (String) data;
-            showRoundWinPopup(word);
-        } else {
-            System.out.println("Unexpected data type for round win: " + data.getClass());
-        }
+        String word = ((GameInfo) data).message;
+        showRoundWinPopup(word);
+        clientConnection.sendCategoryRequest();
     }
 
     private void handleRoundLoss(Serializable data) {
-        if (data instanceof GameInfo && ((GameInfo) data).flag.equals("lostRound")) {
-            String word = ((GameInfo) data).message;
-            updateIncorrectWords(word);
-            categoriesStatus.remove(categoriesStatus.toArray()[categoriesStatus.size() - 1]);
-            showRoundLossPopup(word);
-        } else {
-            System.out.println("Unexpected data type for round loss: " + data.getClass());
-        }
+        String word = ((GameInfo) data).message;
+        showRoundLossPopup(word);
+        clientConnection.sendCategoryRequest();
     }
 
     private void handleGameWin(Serializable data) {

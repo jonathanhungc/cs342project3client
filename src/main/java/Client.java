@@ -89,11 +89,11 @@ public class Client extends Thread {
                         callbackWord.accept(data);
                         break;
                     case "wonRound":
-                        callbackRoundWin.accept(data.message);
+                        callbackRoundWin.accept(data);
                         break;
                     case "lostRound":
-                        this.currentWord = data.message;
-                        incorrectWords.add(currentWord);
+//                        this.currentWord = data.message;
+//                        incorrectWords.add(currentWord);
                         callbackRoundLoss.accept(data);
                         break;
                     case "wonGame":

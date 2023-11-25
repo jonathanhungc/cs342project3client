@@ -124,7 +124,7 @@ public class ClientGUI extends Application {
         });
     
         Button exitBtn = new Button("Exit");
-        exitBtn.setOnAction(e -> handleExitConfirmation());
+        exitBtn.setOnAction(e -> primaryStage.close());
     
         Label messageLabel = new Label("Welcome to the Word Guess Game!");
     
@@ -340,7 +340,7 @@ public class ClientGUI extends Application {
     
         Button exitButton = new Button("Exit");
         exitButton.setStyle("-fx-font-family: Arial; -fx-font-size: 20; -fx-background-color: white; -fx-text-fill: black;");
-        exitButton.setOnAction(e -> handleExitConfirmation());
+        exitButton.setOnAction(e -> primaryStage.close());
     
         VBox box = new VBox(20, messageLabel, restartButton, exitButton);
         box.setAlignment(Pos.CENTER);
@@ -367,7 +367,7 @@ public class ClientGUI extends Application {
 
         Button exitButton = new Button("Exit");
         exitButton.setStyle("-fx-font-family: Arial; -fx-font-size: 20; -fx-background-color: white; -fx-text-fill: black;");
-        exitButton.setOnAction(e -> handleExitConfirmation());
+        exitButton.setOnAction(e -> primaryStage.close());
 
         VBox box = new VBox(20, messageLabel, restartButton, exitButton);
         box.setAlignment(Pos.CENTER);
@@ -491,19 +491,4 @@ public class ClientGUI extends Application {
         alert.showAndWait();
     } // end of showError()
 
-    /*
-     * handleExitConfirmation: Handles the confirmation for exiting the game.
-     */
-    private void handleExitConfirmation() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit Confirmation");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to exit the game?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            clientConnection.sendExitRequest();
-            Platform.exit();
-        }
-    } // end of handleExitConfirmation()
 } // end of ClientGUI class

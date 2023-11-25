@@ -52,7 +52,7 @@ public class ClientGUI extends Application {
 
         Scene portScene = new Scene(portBox, 400, 200);
         primaryStage.setScene(portScene);
-        primaryStage.setTitle("Enter Server Port");
+        primaryStage.setTitle("Word Guess Game");
         primaryStage.show();
     } // end of start()
 
@@ -189,63 +189,62 @@ public class ClientGUI extends Application {
     
         return new Scene(box, 700, 800);
     } // end of createCategoryScene()
-    
+
     /**
-     * createGameScene: Creates the game scene with word guessing interface.
-     * @param info The GameInfo object containing game data.
-     * @param primaryStage The primary stage for the JavaFX application.
-     * @return The Scene for the game interface.
-     */
+    * createGameScene: Creates the game scene with word guessing interface.
+    * @param info           The GameInfo object containing game data.
+    * @param primaryStage   The primary stage for the JavaFX application.
+    * @return The Scene for the game interface.
+    */
     private Scene createGameScene(GameInfo info, Stage primaryStage) {
         Label instructionLabel = new Label("Guess a letter of the word!");
         instructionLabel.setStyle("-fx-font-size: 40; -fx-font-weight: bold;");
-    
+
         for (int i = 0; i < info.wordGuess.length; i++) {
             if (info.wordGuess[i] == '\0') {
                 info.wordGuess[i] = '_';
             }
         }
-    
+
         Label wordLabel = new Label(new String(info.wordGuess));
         wordLabel.setStyle("-fx-font-family: Arial; -fx-font-size: 30; -fx-font-weight: bold;");
-    
+
         TextField textField = new TextField();
         textField.setPromptText("Guess letter");
         textField.setMaxWidth(200);
         textField.setPrefHeight(60);
         textField.setStyle("-fx-border-color: black; -fx-border-width: 1px; -fx-font-family: Arial; -fx-font-size: 16;");
-    
-        // Use TextFormatter to limit input to one lowercase letter
+
+        // Use TextFormatter to limit input to one lowercase letter or empty string (for backspace/delete)
         TextFormatter<String> formatter = new TextFormatter<>(change -> {
             String newText = change.getControlNewText().toLowerCase();
-            if (newText.matches("[a-z]") && newText.length() <= 1) {
+            if (newText.matches("[a-z]") || newText.isEmpty()) {
                 return change;
             } else {
                 return null;
             }
         });
-    
+
         textField.setTextFormatter(formatter);
-    
+
         Label attempts = new Label(6 - info.misses + " misses left");
         attempts.setStyle("-fx-font-family: Arial; -fx-font-size: 20; -fx-text-fill: black");
-    
+
         Button submitBtn = new Button("Submit");
         submitBtn.setStyle("-fx-font-family: Arial; -fx-font-size: 20; -fx-background-color: white; -fx-text-fill: black;");
-    
+
         // Message VBox
         VBox messageBox = new VBox(10);
         messageBox.setAlignment(Pos.CENTER);
         Label messageLabel = new Label("Please enter lowercase letters only. Any other character will lead to a miss penalty.");
         messageLabel.setStyle("-fx-font-family: Arial; -fx-font-size: 15; -fx-text-fill: black");
 
-        messageBox.getChildren().add(messageLabel); // add the label to the VBox
+        messageBox.getChildren().add(messageLabel);
 
         VBox box = new VBox(20, instructionLabel, wordLabel, textField, attempts, submitBtn, messageBox);
         box.setAlignment(Pos.CENTER);
         box.setStyle("-fx-background-color: cyan; -fx-font-family: Arial; -fx-font-size: 14;");
 
-            
         submitBtn.setOnAction(e -> {
             String guess = textField.getText();
             if (!guess.isEmpty()) {
@@ -254,11 +253,12 @@ public class ClientGUI extends Application {
                 textField.clear();
             }
         });
-    
+
         currentGameScene = new Scene(box, 800, 1000);
-    
+
         return currentGameScene;
     } // end of createGameScene()
+
     
 
     /**

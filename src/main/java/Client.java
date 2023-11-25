@@ -1,3 +1,12 @@
+/*
+ * Author: Yamaan Nandolia & Jonathan Hung
+ * NetID: ynand3@uic.edu & jhung9@uic.edu
+ * File Name: Client.java
+ * Project Name: Multi-Threaded Server/Client Game
+ * System: VSCode on Mac
+ * File Description: Client class for the Word Guess Game.
+ */
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +18,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/*
+ * Client: The following is a class for the Client connection
+ */
 public class Client extends Thread {
     private Socket socketClient;
     private ObjectOutputStream out;
@@ -27,6 +39,17 @@ public class Client extends Thread {
     private Set<String> wonCategories = new HashSet<>();
     private List<String> categoriesStatus = new ArrayList<>();
 
+    /**
+     * Client: Constructor for the Client class.
+     * @param port              The port to connect to.
+     * @param callbackCategories Callback function for handling category data.
+     * @param callbackWord      Callback function for handling word data.
+     * @param callbackRoundWin  Callback function for handling round win data.
+     * @param callbackRoundLoss Callback function for handling round loss data.
+     * @param callbackGameWin   Callback function for handling game win data.
+     * @param callbackGameLoss  Callback function for handling game loss data.
+     * @param errorCallback     Callback function for handling errors.
+     */
     public Client(int port, Consumer<Serializable> callbackCategories, Consumer<Serializable> callbackWord,
                   Consumer<Serializable> callbackRoundWin, Consumer<Serializable> callbackRoundLoss,
                   Consumer<Serializable> callbackGameWin, Consumer<Serializable> callbackGameLoss, // Added this line
@@ -49,33 +72,58 @@ public class Client extends Thread {
         } catch (Exception e) {
             errorCallback.accept("Error connecting to the server.");
         }
-    }
+    } // end of Client()
     
+    /*
+     * resetGameState: Resets the game state by clearing the current word and incorrect words.
+     */
     public void resetGameState() {
         // Reset the current word and incorrect words
         this.currentWord = null;
         this.incorrectWords.clear();
-    }
+    } // end of resetGameState()
 
+    /**
+     * getWonCategories: Getter for the set of won categories.
+     * @return The set of won categories.
+     */
     public Set<String> getWonCategories() {
         return wonCategories;
-    }
+    } // end of getWonCategories()
 
+    /*
+     * clearWonCategories: Clears the set of won categories.
+     */
     public void clearWonCategories() {
         wonCategories.clear();
-    }
+    } // end of clearWonCategories()
+
+    /*
+     * clearCategoriesStatus: Clears the list of categories' status.
+     */
     public void clearCategoriesStatus() {
         categoriesStatus.clear();
-    }
+    } // end of clearCategoriesStatus()
 
-    public void setClientGUI(ClientGUI clientGUI) {
+    /**
+     * setClientGUI: Setter for the associated ClientGUI for the client.
+     * @param clientGUI The associated ClientGUI.
+     */
+        public void setClientGUI(ClientGUI clientGUI) {
         this.clientGUI = clientGUI;
-    }
+    } // end of setClientGUI()
 
+    /**
+     * getCurrentWord: Getter for the current word.
+     * @return The current word.
+     */
     public String getCurrentWord() {
         return currentWord;
-    }
+    } // end of getCurrentWord()
 
+    /*
+     * run: The main run method of the client thread. Listens for server messages and calls appropriate callbacks.
+     */
     public void run() {
         while (true) {
             try {
@@ -92,21 +140,17 @@ public class Client extends Thread {
                         callbackRoundWin.accept(data);
                         break;
                     case "lostRound":
-//                        this.currentWord = data.message;
-//                        incorrectWords.add(currentWord);
                         callbackRoundLoss.accept(data);
                         break;
                     case "wonGame":
                         callbackGameWin.accept(data);
                         break;
                     case "lostGame":
-                        callbackGameLoss.accept(data); // Added this line
+                        callbackGameLoss.accept(data);
                         break;
                     case "error":
                         errorCallback.accept(data.message);
                         break;
-                    // Add more cases as needed
-
                     default:
                         break;
                 }
@@ -116,8 +160,11 @@ public class Client extends Thread {
                 break;
             }
         }
-    }
+    } // end of run()
 
+    /*
+     * sendCategoryRequest: Sends a category request to the server.
+     */
     public void sendCategoryRequest() {
         try {
             GameInfo info = new GameInfo("sendCategories");
@@ -125,8 +172,12 @@ public class Client extends Thread {
         } catch (IOException e) {
             errorCallback.accept("Error sending category request.");
         }
-    }
+    } // end of sendCategoryRequest()
 
+    /**
+     * sendSelectedCategory: Sends the selected category to the server.
+     * @param categoryName The selected category.
+     */
     public void sendSelectedCategory(String categoryName) {
         try {
             GameInfo info = new GameInfo("selectedCategory");
@@ -135,8 +186,12 @@ public class Client extends Thread {
         } catch (IOException e) {
             errorCallback.accept("Error sending selected category.");
         }
-    }
+    } // end of sendSelectedCategory()
 
+    /**
+     * sendLetter: Sends a guessed letter to the server.
+     * @param letter The guessed letter.
+     */
     public void sendLetter(String letter) {
         try {
             GameInfo info = new GameInfo("letter");
@@ -145,8 +200,11 @@ public class Client extends Thread {
         } catch (IOException e) {
             errorCallback.accept("Error sending letter.");
         }
-    }
+    } // end of sendLetter()
 
+    /*
+     * sendRestartRequest: Sends a restart request to the server.
+     */
     public void sendRestartRequest() {
         try {
             GameInfo info = new GameInfo("restart");
@@ -154,8 +212,11 @@ public class Client extends Thread {
         } catch (IOException e) {
             errorCallback.accept("Error sending restart request.");
         }
-    }
+    } // end of sendRestartRequest()
 
+    /*
+     * sendExitRequest: Sends an exit request to the server.
+     */
     public void sendExitRequest() {
         try {
             GameInfo info = new GameInfo("exit");
@@ -163,5 +224,5 @@ public class Client extends Thread {
         } catch (IOException e) {
             errorCallback.accept("Error sending exit request.");
         }
-    }
-}
+    } // end of sendExitRequest()
+} // end of Client class

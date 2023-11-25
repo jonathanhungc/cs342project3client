@@ -51,4 +51,4 @@ public class GameInfo implements Serializable {
     public void setMessage(String message) {
         this.message = message;
     }
-}
+} // end of GameInfoClass
